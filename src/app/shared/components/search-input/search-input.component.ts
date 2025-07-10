@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, effect, input, linkedSignal, output } from '@angular/core';
 
 @Component({
   selector: 'app-search-input',
@@ -9,8 +9,21 @@ export class SearchInputComponent {
 
   public placeholder = input<string>('Buscar');
   public value = output<string>();
+  public initialValue = input<string>();
+  public inputValue = linkedSignal<string>(() => this.initialValue() ?? '');
+  public debounceTime = input<number>(300);
 
-  onSearch( value: string ) {
-    this.value.emit(value);
-  }
+  debouncerEffect = effect((onCleanup) => {
+    const value = this.inputValue();
+
+    const timeout = setTimeout(() => {
+      this.value.emit(value);
+    }, this.debounceTime());
+
+    onCleanup(() => {
+      clearTimeout(timeout);
+    })
+  });
+
+
 }

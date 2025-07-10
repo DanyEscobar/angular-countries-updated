@@ -1,6 +1,7 @@
 <app-search-input
   [placeholder]="'Buscar por país'"
   (value)="query.set($event)"
+  [initialValue]="query()"
 ></app-search-input>
 
 
